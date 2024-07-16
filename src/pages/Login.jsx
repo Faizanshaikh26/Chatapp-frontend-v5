@@ -30,6 +30,7 @@ const Login = () => {
   const bio = useInputValidation("");
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
+  const email = useInputValidation("");
 
   const avatar = useFileHandler("single");
 
@@ -52,7 +53,7 @@ const Login = () => {
       const { data } = await axios.post(
         `${server}/api/v1/user/login`,
         {
-          username: username.value,
+          email: username.value,
           password: password.value,
         },
         config
@@ -82,6 +83,7 @@ const Login = () => {
     formData.append("bio", bio.value);
     formData.append("username", username.value);
     formData.append("password", password.value);
+    formData.append("email", email.value);
 
     const config = {
       withCredentials: true,
@@ -148,11 +150,11 @@ const Login = () => {
                 <TextField
                   required
                   fullWidth
-                  label="Username"
+                  label="email"
                   margin="normal"
                   variant="outlined"
-                  value={username.value}
-                  onChange={username.changeHandler}
+                  value={email.value}
+                  onChange={email.changeHandler}
                 />
 
                 <TextField
@@ -256,6 +258,15 @@ const Login = () => {
                   variant="outlined"
                   value={name.value}
                   onChange={name.changeHandler}
+                />
+                  <TextField
+                  required
+                  fullWidth
+                  label="email"
+                  margin="normal"
+                  variant="outlined"
+                  value={email.value}
+                  onChange={email.changeHandler}
                 />
 
                 <TextField
