@@ -5,7 +5,6 @@ const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: `${server}/api/v1/` }),
   tagTypes: ["Chat", "User", "Message"],
-
   endpoints: (builder) => ({
     myChats: builder.query({
       query: () => ({
@@ -14,7 +13,6 @@ const api = createApi({
       }),
       providesTags: ["Chat"],
     }),
-
     searchUser: builder.query({
       query: (name) => ({
         url: `user/search?name=${name}`,
@@ -22,7 +20,6 @@ const api = createApi({
       }),
       providesTags: ["User"],
     }),
-
     sendFriendRequest: builder.mutation({
       query: (data) => ({
         url: "user/sendrequest",
@@ -32,15 +29,13 @@ const api = createApi({
       }),
       invalidatesTags: ["User"],
     }),
-
     getNotifications: builder.query({
       query: () => ({
-        url: `user/notifications`,
+        url: "user/notifications",
         credentials: "include",
       }),
       keepUnusedDataFor: 0,
     }),
-
     acceptFriendRequest: builder.mutation({
       query: (data) => ({
         url: "user/acceptrequest",
@@ -50,8 +45,7 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
-
-    chatDetails: builder.query({
+    getChatDetails: builder.query({
       query: ({ chatId, populate = false }) => {
         let url = `chat/${chatId}`;
         if (populate) url += "?populate=true";
@@ -63,15 +57,14 @@ const api = createApi({
       },
       providesTags: ["Chat"],
     }),
-
     getMessages: builder.query({
       query: ({ chatId, page }) => ({
         url: `chat/message/${chatId}?page=${page}`,
         credentials: "include",
       }),
+
       keepUnusedDataFor: 0,
     }),
-
     sendAttachments: builder.mutation({
       query: (data) => ({
         url: "chat/message",
@@ -80,15 +73,13 @@ const api = createApi({
         body: data,
       }),
     }),
-
-    myGroups: builder.query({
+    getMyGroups: builder.query({
       query: () => ({
-        url: "chat/my/groups",
+        url: `chat/my/groups`,
         credentials: "include",
       }),
       providesTags: ["Chat"],
     }),
-
     availableFriends: builder.query({
       query: (chatId) => {
         let url = `user/friends`;
@@ -101,7 +92,6 @@ const api = createApi({
       },
       providesTags: ["Chat"],
     }),
-
     newGroup: builder.mutation({
       query: ({ name, members }) => ({
         url: "chat/new",
@@ -111,7 +101,6 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
-
     renameGroup: builder.mutation({
       query: ({ chatId, name }) => ({
         url: `chat/${chatId}`,
@@ -121,7 +110,6 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
-
     removeGroupMember: builder.mutation({
       query: ({ chatId, userId }) => ({
         url: `chat/removemember`,
@@ -141,7 +129,6 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
-
     deleteChat: builder.mutation({
       query: (chatId) => ({
         url: `chat/${chatId}`,
@@ -150,7 +137,6 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
-
     leaveGroup: builder.mutation({
       query: (chatId) => ({
         url: `chat/leave/${chatId}`,
@@ -159,20 +145,49 @@ const api = createApi({
       }),
       invalidatesTags: ["Chat"],
     }),
+    getDashBoardStats: builder.query({
+      query: () => ({
+        url: "admin/stats",
+        credentials: "include",
+      }),
+      providesTags: ["Chat", "User"],
+    }),
+    getAllUsersData: builder.query({
+      query: () => ({
+        url: "admin/users",
+        credentials: "include",
+      }),
+      providesTags: ["Chat", "User"],
+    }),
+    getAllChats: builder.query({
+      query: () => ({
+        url: "admin/chats",
+        credentials: "include",
+      }),
+      providesTags: ["Chat", "User"],
+    }),
+    getAllMessages: builder.query({
+      query: () => ({
+        url: 'admin/messages',
+        credentials: 'include',
+      }),
+      providesTags: ['Chat', 'User'],
+    }),
   }),
 });
 
 export default api;
+
 export const {
   useMyChatsQuery,
   useLazySearchUserQuery,
   useSendFriendRequestMutation,
   useGetNotificationsQuery,
   useAcceptFriendRequestMutation,
-  useChatDetailsQuery,
+  useGetChatDetailsQuery,
   useGetMessagesQuery,
   useSendAttachmentsMutation,
-  useMyGroupsQuery,
+  useGetMyGroupsQuery,
   useAvailableFriendsQuery,
   useNewGroupMutation,
   useRenameGroupMutation,
@@ -180,4 +195,9 @@ export const {
   useAddGroupMembersMutation,
   useDeleteChatMutation,
   useLeaveGroupMutation,
+  useGetDashBoardStatsQuery,
+  useGetAllUsersDataQuery,
+  useGetAllChatsQuery,
+  useGetAllMessagesQuery
+  
 } = api;

@@ -1,3 +1,15 @@
+export const DarkBgColor = "#111111 ";
+
+export const LightBgColor = "#f6f6f6 ";
+
+export const DarkLightColor = "#2f2f2f ";
+
+export const dark = "#004056 ";
+export const light = "#2C858D ";
+export const light2 = "#74CEB7 ";
+export const light3 = "##C9FFD5 ";
+export const light4 = "#FFFFCB ";
+
 export const orange = "#ea7070";
 export const orangeLight = "rgba(234, 112, 112,0.2)";
 

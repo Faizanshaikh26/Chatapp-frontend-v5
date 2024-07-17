@@ -26,7 +26,7 @@ const ChatItem = ({
       <motion.div
         initial={{ opacity: 0, y: "-100%" }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 * index }}
+        transition={{ delay: 0.080 * index }}
         style={{
           display: "flex",
           gap: "1rem",

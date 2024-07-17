@@ -1,31 +1,27 @@
-import React, { Suspense, lazy, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProtectRoute from "./components/auth/ProtectRoute";
-import { LayoutLoader } from "./components/layout/Loaders";
-import axios from "axios";
-import { server } from "./constants/config";
-import { useDispatch, useSelector } from "react-redux";
-import { userExists, userNotExists } from "./redux/reducers/auth";
-import { Toaster } from "react-hot-toast";
-import { SocketProvider } from "./socket";
+import React, { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectRoute from './components/auth/ProtectRoute';
+import LayoutLoaders from './components/layout/Loaders';
+import { server } from './constants/config';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { userExists, userNotExists } from './redux/reducer/auth'; 
+import {Toaster} from 'react-hot-toast' // Corrected import statement
+import { SocketProvider } from './Socket';
 
-const Home = lazy(() => import("./pages/Home"));
-const Login = lazy(() => import("./pages/Login"));
-const Chat = lazy(() => import("./pages/Chat"));
-const Groups = lazy(() => import("./pages/Groups"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Chat = lazy(() => import('./pages/Chat'));
+const Groups = lazy(() => import('./pages/Groups'));
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
+const ChatManagement = lazy(() => import('./pages/admin/ChatManagement'));
+const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'));
+const Notfound = lazy(() => import('./pages/Notfound'));
 
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
-const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
-const ChatManagement = lazy(() => import("./pages/admin/ChatManagement"));
-const MessagesManagement = lazy(() =>
-  import("./pages/admin/MessageManagement")
-);
-
-const App = () => {
-  const { user, loader } = useSelector((state) => state.auth);
-
+function App() {
+  const { user, isLoading } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,46 +31,34 @@ const App = () => {
       .catch((err) => dispatch(userNotExists()));
   }, [dispatch]);
 
-  return loader ? (
-    <LayoutLoader />
-  ) : (
+  return (
+    isLoading ? <LayoutLoaders /> :
     <BrowserRouter>
-      <Suspense fallback={<LayoutLoader />}>
+      <Suspense fallback={<LayoutLoaders />}>
         <Routes>
-          <Route
-            element={
-              <SocketProvider>
-                <ProtectRoute user={user} />
-              </SocketProvider>
-            }
-          >
-            <Route path="/" element={<Home />} />
-            <Route path="/chat/:chatId" element={<Chat />} />
-            <Route path="/groups" element={<Groups />} />
+          <Route element={<SocketProvider>
+            <ProtectRoute user={user} />
+          </SocketProvider>}>
+            <Route path='/' element={<Home />} />
+            <Route path='/groups' element={<Groups />} />
+            <Route path='/chat/:chatId' element={<Chat />} />
           </Route>
 
-          <Route
-            path="/login"
-            element={
-              <ProtectRoute user={!user} redirect="/">
-                <Login />
-              </ProtectRoute>
-            }
-          />
+          <Route element={<ProtectRoute user={!user} redirect='/' />}>
+            <Route path='/login' element={<Login />} />
+          </Route>
 
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/chats" element={<ChatManagement />} />
-          <Route path="/admin/messages" element={<MessagesManagement />} />
-
-          <Route path="*" element={<NotFound />} />
+          <Route path='/admin' element={<AdminLogin />} />
+          <Route path='/admin/dashboard' element={<Dashboard />} />
+          <Route path='/admin/users' element={<UserManagement />} />
+          <Route path='/admin/chats' element={<ChatManagement />} />
+          <Route path='/admin/messages' element={<MessageManagement />} />
+          <Route path='*' element={<Notfound />} />
         </Routes>
       </Suspense>
-
-      <Toaster position="bottom-center" />
+      <Toaster position='bottom-center'/>
     </BrowserRouter>
   );
-};
+}
 
 export default App;

@@ -1,38 +1,32 @@
+import React from "react";
+import { Line, Doughnut } from "react-chartjs-2";
+
 import {
   ArcElement,
   CategoryScale,
-  Chart as ChartJS,
+  Chart as Chartjs,
   Filler,
   Legend,
   LineElement,
   LinearScale,
   PointElement,
+  Title,
   Tooltip,
 } from "chart.js";
-import React from "react";
-import { Doughnut, Line } from "react-chartjs-2";
-import {
-  orange,
-  orangeLight,
-  purple,
-  purpleLight,
-} from "../../constants/color";
-import { getLast7Days } from "../../lib/features";
+import { getLast70Days } from "../../lib/features";
 
-ChartJS.register(
-  Tooltip,
+Chartjs.register(
   CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement,
+  Tooltip,
   Filler,
+  LinearScale,
+  PointElement,
+  LineElement,
   ArcElement,
   Legend
 );
 
-const labels = getLast7Days();
-
-const lineChartOptions = {
+const LineChartoptions = {
   responsive: true,
   plugins: {
     legend: {
@@ -42,7 +36,6 @@ const lineChartOptions = {
       display: false,
     },
   },
-
   scales: {
     x: {
       grid: {
@@ -50,7 +43,7 @@ const lineChartOptions = {
       },
     },
     y: {
-      beginAtZero: true,
+        beginAtZero: true,
       grid: {
         display: false,
       },
@@ -58,53 +51,51 @@ const lineChartOptions = {
   },
 };
 
-const LineChart = ({ value = [] }) => {
+const labels=getLast70Days()
+const LineChart = ({value=[]}) => {
   const data = {
-    labels,
+    labels:labels,
     datasets: [
       {
+        label: "Message",
         data: value,
-        label: "Messages",
+        borderColor: "rgba(75, 12, 192, 0.2)",
+        backgroundColor: "rgba(75, 12, 192, 1)",
         fill: true,
-        backgroundColor: purpleLight,
-        borderColor: purple,
       },
     ],
-  };
 
-  return <Line data={data} options={lineChartOptions} />;
+   
+  };
+  return <Line data={data} options={LineChartoptions} />;
 };
 
-const doughnutChartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false,
+
+const DoughnutChartoptions ={
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    
     },
-  },
-  cutout: 120,
-};
+    cutout:110
 
-const DoughnutChart = ({ value = [], labels = [] }) => {
-  const data = {
-    labels,
-    datasets: [
-      {
-        data: value,
-        backgroundColor: [purpleLight, orangeLight],
-        hoverBackgroundColor: [purple, orange],
-        borderColor: [purple, orange],
-        offset: 40,
-      },
-    ],
+}
+const DoughnutChart = ({value=[],labels=[]}) => {
+
+    const data = {
+      labels,
+      datasets: [
+        {
+          data:value,
+          backgroundColor: ["#FF6384", "#36A2EB"],
+          hoverBackgroundColor: ["#FF6384", "#36A2EB",],
+          offset:10
+        },
+      ],
+    };
+    return <Doughnut style={{zIndex:'99'}} data={data}  options={DoughnutChartoptions}/>;
   };
-  return (
-    <Doughnut
-      style={{ zIndex: 10 }}
-      data={data}
-      options={doughnutChartOptions}
-    />
-  );
-};
 
-export { DoughnutChart, LineChart };
+export { LineChart, DoughnutChart };

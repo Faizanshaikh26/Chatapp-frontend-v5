@@ -1,7 +1,7 @@
 import { ListItemText, Menu, MenuItem, MenuList, Tooltip } from "@mui/material";
 import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsFileMenu, setUploadingLoader } from "../../redux/reducers/misc";
+import { setIsFileMenu, setUploadingLoader } from "../redux/reducer/misc";
 import {
   AudioFile as AudioFileIcon,
   Image as ImageIcon,
@@ -9,7 +9,7 @@ import {
   VideoFile as VideoFileIcon,
 } from "@mui/icons-material";
 import toast from "react-hot-toast";
-import { useSendAttachmentsMutation } from "../../redux/api/api";
+import { useSendAttachmentsMutation } from "../redux/api/api";
 
 const FileMenu = ({ anchorE1, chatId }) => {
   const { isFileMenu } = useSelector((state) => state.misc);

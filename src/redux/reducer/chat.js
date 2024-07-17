@@ -22,30 +22,25 @@ const chatSlice = createSlice({
     incrementNotification: (state) => {
       state.notificationCount += 1;
     },
-    resetNotificationCount: (state) => {
+    resetNotification: (state) => {
       state.notificationCount = 0;
     },
-
     setNewMessagesAlert: (state, action) => {
-      const chatId = action.payload.chatId;
-
       const index = state.newMessagesAlert.findIndex(
-        (item) => item.chatId === chatId
+        (s) => s.chatId === action.payload.chatId
       );
-
       if (index !== -1) {
         state.newMessagesAlert[index].count += 1;
       } else {
         state.newMessagesAlert.push({
-          chatId,
+          chatId: action.payload.chatId,
           count: 1,
         });
       }
     },
-
     removeNewMessagesAlert: (state, action) => {
       state.newMessagesAlert = state.newMessagesAlert.filter(
-        (item) => item.chatId !== action.payload
+        (s) => s.chatId !== action.payload
       );
     },
   },
@@ -54,7 +49,7 @@ const chatSlice = createSlice({
 export default chatSlice;
 export const {
   incrementNotification,
-  resetNotificationCount,
+  resetNotification,
   setNewMessagesAlert,
   removeNewMessagesAlert,
 } = chatSlice.actions;

@@ -1,53 +1,74 @@
+// const fileFormat = (url) => {
+//   const fileExtension = url.split(".").pop();
+//   if (
+//     fileExtension === "mp4" ||
+//     fileExtension === "webm" ||
+//     fileExtension === "ogg"
+//   )
+//     return "video";
+
 import moment from "moment";
 
-const fileFormat = (url = "") => {
-  const fileExt = url.split(".").pop();
+//   if (fileExtension === "mp3" || fileExtension === "wav") return "audio";
 
-  if (fileExt === "mp4" || fileExt === "webm" || fileExt === "ogg")
-    return "video";
+//   if (
+//     fileExtension === "png" ||
+//     fileExtension === "jpg" ||
+//     fileExtension === "jpeg" ||
+//     fileExtension === "gif"
+//   )
+//     return "image";
 
-  if (fileExt === "mp3" || fileExt === "wav") return "audio";
-  if (
-    fileExt === "png" ||
-    fileExt === "jpg" ||
-    fileExt === "jpeg" ||
-    fileExt === "gif"
-  )
-    return "image";
+//   return "file";
+// };
 
-  return "file";
-};
+// export {fileFormat}
 
-// https://res.cloudinary.com/dj5q966nb/image/upload/dpr_auto/w_200/v1710344436/fafceddc-2845-4ae7-a25a-632f01922b4d.png
+const fileFormat = (url='',width=100) => {
+    const extensionToFormat = {
+      'mp4': 'video',
+      'webm': 'video',
+      'ogg': 'video',
+      'mp3': 'audio',
+      'wav': 'audio',
+      'png': 'image',
+      'jpg': 'image',
+      'jpeg': 'image',
+      'gif': 'image',
+    };
+  
+    const fileExtension = url.split('.').pop().toLowerCase();
+    return extensionToFormat[fileExtension] || 'file';
 
-// /dpr_auto/w_200
-const transformImage = (url = "", width = 100) => {
-  const newUrl = url.replace("upload/", `upload/dpr_auto/w_${width}/`);
 
-  return newUrl;
-};
+  };
 
-const getLast7Days = () => {
-  const currentDate = moment();
+  
+  const transformImage=(url='',width)=>url
 
-  const last7Days = [];
 
-  for (let i = 0; i < 7; i++) {
-    const dayDate = currentDate.clone().subtract(i, "days");
-    const dayName = dayDate.format("dddd");
+  const getLast70Days=() =>{
+const currentDate =moment();
+const last70Days=[];
 
-    last7Days.unshift(dayName);
+for (let i = 0; i<7; i++) {
+  const dayDate=currentDate.clone().subtract(i,'days');
+
+  const dayName=dayDate.format("ddd")
+  last70Days.unshift(dayName);
+  
+}
+return last70Days
   }
+  
 
-  return last7Days;
-};
-
-const getOrSaveFromStorage = ({ key, value, get }) => {
-  if (get)
-    return localStorage.getItem(key)
-      ? JSON.parse(localStorage.getItem(key))
-      : null;
-  else localStorage.setItem(key, JSON.stringify(value));
-};
-
-export { fileFormat, transformImage, getLast7Days, getOrSaveFromStorage };
+  const getOrSaveFromStorage = ({ key, value, get }) => {
+    if (get)
+      return localStorage.getItem(key)
+        ? JSON.parse(localStorage.getItem(key))
+        : null;
+    else localStorage.setItem(key, JSON.stringify(value));
+  };
+  
+  export { fileFormat,transformImage ,getLast70Days,getOrSaveFromStorage};
+  

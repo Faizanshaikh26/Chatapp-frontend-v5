@@ -1,5 +1,3 @@
-import { useFileHandler, useInputValidation } from "6pp";
-import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import {
   Avatar,
   Button,
@@ -10,322 +8,381 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
-import { bgGradient } from "../constants/color";
+import { VisuallyHiddeninput } from "../components/styles/StyledComponents";
+import { useInputValidation, useFileHandler } from '6pp';
+import { usernameValidator } from "../utils/Validators";
 import { server } from "../constants/config";
-import { userExists } from "../redux/reducers/auth";
-import { usernameValidator } from "../utils/validators";
+import { useDispatch } from "react-redux";
+import { userExists } from "../redux/reducer/auth";
+import toast from "react-hot-toast";
+import axios from 'axios'; // Import Axios
 
-const Login = () => {
+function Login() {
   const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const toggleLogin = () => setIsLogin((prev) => !prev);
-
+  const [isLoading, setIsLoading] = useState(false)
   const name = useInputValidation("");
+  const email = useInputValidation("");
   const bio = useInputValidation("");
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
   const avatar = useFileHandler("single");
   const dispatch = useDispatch();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
 
-    const toastId = toast.loading("Logging In...");
+ 
 
-    setIsLoading(true);
-    const config = {
-      withCredentials: true,
+//   const handleSignup = async (e) => {
+//     e.preventDefault();
+//     const toastId = toast.loading("Signing...")
+// setIsLoading(true)
+//     if (!avatar.file) {
+//       toast.error("Please upload an avatar");
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("name", name.value);
+//     formData.append("email", email.value);
+//     formData.append("bio", bio.value);
+//     formData.append("username", username.value);
+//     formData.append("password", password.value);
+//     formData.append("avatar", avatar.file);
+
+//     try {
+//       const response = await axios.post(`${server}/api/v1/user/signup`, formData, {
+//         withCredentials: true,  // Ensure credentials are included
+//         headers: {
+//           'Content-Type': 'multipart/form-data',  // Set correct content type for FormData
+//         },
+//       });
+
+//       const data = response.data;
+
+//       if (!response.data.success) {
+//         throw new Error(data.message || "Something went wrong");
+//       }
+
+//       dispatch(userExists(true));
+//       toast.success(data.message,{
+//         id:toast
+//       });
+
+//     } catch (error) {
+//       toast.error(error.message || "Something went wrong",{id:toastId});
+//     }
+//     finally{
+//       setIsLoading(false)
+//     }
+//   };
+
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     const toastId=toast.loading("Loggin...")
+    
+// setIsLoading(true)
+//     const requestBody = {
+//       email: email.value,
+//       password: password.value,
+//     };
+
+//     try {
+//       const response = await axios.post(`${server}/api/v1/user/login`, requestBody, {
+//         withCredentials: true,  // Ensure credentials are included
+//       });
+
+//       const data = response.data;
+
+//       if (!response.data.success) {
+//         throw new Error(data.message || "Something went wrong");
+//       }
+
+//       dispatch(userExists(true));
+//       toast.success(data.message,{id:toastId});
+//     } catch (error) {
+//       toast.error(error.message || "Something went wrong",{id:toastId});
+//     }
+//     finally{
+//       setIsLoading(false)
+//     }
+//   };
+const handleSignup = async (e) => {
+  e.preventDefault();
+  const toastId = toast.loading("Signing...");
+  setIsLoading(true);
+  if (!avatar.file) {
+    toast.error("Please upload an avatar");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("name", name.value);
+  // formData.append("email", email.value);
+  formData.append("bio", bio.value);
+  formData.append("username", username.value);
+  formData.append("password", password.value);
+  formData.append("avatar", avatar.file);
+
+  try {
+    const response = await fetch(`${server}/api/v1/user/new`, {
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Accept': 'application/json',
       },
-    };
+      body: formData,
+    });
 
-    try {
-      const { data } = await axios.post(
-        `${server}/api/v1/user/login`,
-        {
-          username: username.value,
-          password: password.value,
-        },
-        config
-      );
-      dispatch(userExists(data.user));
-      toast.success(data.message, {
-        id: toastId,
-      });
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something Went Wrong", {
-        id: toastId,
-      });
-    } finally {
-      setIsLoading(false);
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || "Something went wrong");
     }
+
+    dispatch(userExists(true));
+    toast.success(data.message, { id: toastId });
+
+  } catch (error) {
+    toast.error(error.message || "Something went wrong", { id: toastId });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+  const toastId = toast.loading("Logging...");
+  setIsLoading(true);
+
+  const requestBody = {
+    username: username.value,
+    password: password.value,
   };
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
-    const toastId = toast.loading("Signing Up...");
-    setIsLoading(true);
-
-    const formData = new FormData();
-    formData.append("avatar", avatar.file);
-    formData.append("name", name.value);
-    formData.append("bio", bio.value);
-    formData.append("username", username.value);
-    formData.append("password", password.value);
-
-
-    const config = {
-      withCredentials: true,
+  try {
+    const response = await fetch(`${server}/api/v1/user/login`, {
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'application/json',
       },
-    };
+      body: JSON.stringify(requestBody),
+    });
 
-    try {
-      const { data } = await axios.post(
-        `${server}/api/v1/user/new`,
-        formData,
-        config
-      );
+    const data = await response.json();
 
-      dispatch(userExists(data.user));
-      toast.success(data.message, {
-        id: toastId,
-      });
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something Went Wrong", {
-        id: toastId,
-      });
-    } finally {
-      setIsLoading(false);
+    if (!data.success) {
+      throw new Error(data.message || "Something went wrong");
     }
-  };
+
+    dispatch(userExists(true));
+    toast.success(data.message, { id: toastId });
+
+  } catch (error) {
+    toast.error(error.message || "Something went wrong", { id: toastId });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
-    <div
-      style={{
-        backgroundImage: bgGradient,
+    <Container
+      component={"main"}
+      maxWidth="xs"
+      sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <Container
-        component={"main"}
-        maxWidth="xs"
+      <Paper
+        elevation={3}
         sx={{
-          height: "100vh",
+          padding: 4,
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
         }}
       >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {isLogin ? (
-            <>
-              <Typography variant="h5">Login</Typography>
-              <form
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                }}
-                onSubmit={handleLogin}
+        {isLogin ? (
+          <>
+            <Typography variant="h5">Login</Typography>
+            <form
+              style={{
+                width: "100%",
+                marginTop: "1rem",
+              }}
+              onSubmit={handleLogin}
+            >
+              {/* <TextField
+                required
+                fullWidth
+                label="E-mail"
+                margin="normal"
+                variant="outlined"
+                value={email.value}
+                onChange={email.changeHandler}
+                type="email"
+              /> */}
+                <TextField
+                required
+                fullWidth
+                label="Username"
+                margin="normal"
+                variant="outlined"
+                value={username.value}
+                onChange={username.changeHandler}
+              />
+              <TextField
+                required
+                fullWidth
+                label="Password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+                value={password.value}
+                onChange={password.changeHandler}
+              />
+              <Button
+                sx={{ marginTop: "1rem" }}
+                variant="contained"
+                color="primary"
+                type="submit"
+                fullWidth
+                disabled={isLoading}
               >
-                <TextField
-                  required
-                  fullWidth
-                  label="Username"
-                  margin="normal"
-                  variant="outlined"
-                  value={username.value}
-                  onChange={username.changeHandler}
-                />
-
-                <TextField
-                  required
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="outlined"
-                  value={password.value}
-                  onChange={password.changeHandler}
-                />
-
-                <Button
-                  sx={{
-                    marginTop: "1rem",
-                  }}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  fullWidth
-                  disabled={isLoading}
-                >
-                  Login
-                </Button>
-
-                <Typography textAlign={"center"} m={"1rem"}>
-                  OR
-                </Typography>
-
-                <Button
-                  disabled={isLoading}
-                  fullWidth
-                  variant="text"
-                  onClick={toggleLogin}
-                >
-                  Sign Up Instead
-                </Button>
-              </form>
-            </>
-          ) : (
-            <>
-              <Typography variant="h5">Sign Up</Typography>
-              <form
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                }}
-                onSubmit={handleSignUp}
+                Login
+              </Button>
+              <Typography textAlign={"center"} m={"1rem"}>
+                Or
+              </Typography>
+              <Button
+                variant="text"
+                fullWidth
+                onClick={() => setIsLogin(false)}
+                disabled={isLoading}
               >
-                <Stack position={"relative"} width={"10rem"} margin={"auto"}>
-                  <Avatar
-                    sx={{
-                      width: "10rem",
-                      height: "10rem",
-                      objectFit: "contain",
-                    }}
-                    src={avatar.preview}
-                  />
-
-                  <IconButton
-                    sx={{
-                      position: "absolute",
-                      bottom: "0",
-                      right: "0",
-                      color: "white",
-                      bgcolor: "rgba(0,0,0,0.5)",
-                      ":hover": {
-                        bgcolor: "rgba(0,0,0,0.7)",
-                      },
-                    }}
-                    component="label"
-                  >
-                    <>
-                      <CameraAltIcon />
-                      <VisuallyHiddenInput
-                        type="file"
-                        onChange={avatar.changeHandler}
-                      />
-                    </>
-                  </IconButton>
-                </Stack>
-
-                {avatar.error && (
-                  <Typography
-                    m={"1rem auto"}
-                    width={"fit-content"}
-                    display={"block"}
-                    color="error"
-                    variant="caption"
-                  >
-                    {avatar.error}
-                  </Typography>
-                )}
-
-                <TextField
-                  required
-                  fullWidth
-                  label="Name"
-                  margin="normal"
-                  variant="outlined"
-                  value={name.value}
-                  onChange={name.changeHandler}
-                />
-                
-
-                <TextField
-                  required
-                  fullWidth
-                  label="Bio"
-                  margin="normal"
-                  variant="outlined"
-                  value={bio.value}
-                  onChange={bio.changeHandler}
-                />
-                <TextField
-                  required
-                  fullWidth
-                  label="Username"
-                  margin="normal"
-                  variant="outlined"
-                  value={username.value}
-                  onChange={username.changeHandler}
-                />
-
-                {username.error && (
-                  <Typography color="error" variant="caption">
-                    {username.error}
-                  </Typography>
-                )}
-
-                <TextField
-                  required
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="outlined"
-                  value={password.value}
-                  onChange={password.changeHandler}
-                />
-
-                <Button
+                Sign Up
+              </Button>
+            </form>
+          </>
+        ) : (
+          <>
+            <Typography variant="h5">Sign Up</Typography>
+            <form
+              style={{
+                width: "100%",
+                marginTop: "1rem",
+              }}
+              onSubmit={handleSignup}
+            >
+              <Stack position={"relative"} width={"6rem"} margin={"auto"}>
+                <Avatar
                   sx={{
-                    marginTop: "1rem",
+                    width: "6rem",
+                    height: "6rem",
+                    objectFit: "contain",
                   }}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  fullWidth
-                  disabled={isLoading}
+                  src={avatar.preview}
+                />
+                <IconButton
+                  sx={{
+                    position: "absolute",
+                    bottom: "1px",
+                    right: "-6px",
+                    color: "white",
+                    bgcolor: "rgba(0,0,0,0.5)",
+                    ":hover": {
+                      bgcolor: "rgba(0,0,0,0.7)",
+                    },
+                    width: '30px',
+                    height: '30px'
+                  }}
+                  component='label'
                 >
-                  Sign Up
-                </Button>
-
-                <Typography textAlign={"center"} m={"1rem"}>
-                  OR
+                  <>
+                    <CameraAltIcon sx={{ width: '15px', height: '15px' }} />
+                    <VisuallyHiddeninput type="file" onChange={avatar.changeHandler} />
+                  </>
+                </IconButton>
+              </Stack>
+              <TextField
+                required
+                fullWidth
+                label="Name"
+                margin="normal"
+                variant="outlined"
+                value={name.value}
+                onChange={name.changeHandler}
+              />
+              <TextField
+                required
+                fullWidth
+                label="Bio"
+                margin="normal"
+                variant="outlined"
+                value={bio.value}
+                onChange={bio.changeHandler}
+              />
+              <TextField
+                required
+                fullWidth
+                label="Username"
+                margin="normal"
+                variant="outlined"
+                value={username.value}
+                onChange={username.changeHandler}
+              />
+              {username.error && (
+                <Typography color="error" variant="caption">
+                  {username.error}
                 </Typography>
-
-                <Button
-                  disabled={isLoading}
-                  fullWidth
-                  variant="text"
-                  onClick={toggleLogin}
-                >
-                  Login Instead
-                </Button>
-              </form>
-            </>
-          )}
-        </Paper>
-      </Container>
-    </div>
+              )}
+              {/* <TextField
+                required
+                fullWidth
+                label="E-mail"
+                margin="normal"
+                variant="outlined"
+                value={email.value}
+                onChange={email.changeHandler}
+                type="email"
+              /> */}
+              <TextField
+                required
+                fullWidth
+                label="Password"
+                type="password"
+                margin="normal"
+                variant="outlined"
+                value={password.value}
+                onChange={password.changeHandler}
+              />
+              <Button
+                sx={{ marginTop: "1rem" }}
+                variant="contained"
+                color="primary"
+                type="submit"
+                fullWidth
+                disabled={isLoading}
+              >
+                Sign Up
+              </Button>
+              <Typography textAlign={"center"} m={"1rem"}>
+                Or
+              </Typography>
+              <Button variant="text" fullWidth onClick={() => setIsLogin(true)}  disabled={isLoading}>
+                Login
+              </Button>
+            </form>
+          </>
+        )}
+      </Paper>
+    </Container>
   );
-};
+}
 
 export default Login;

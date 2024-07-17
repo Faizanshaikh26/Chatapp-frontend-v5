@@ -1,25 +1,20 @@
 import { Menu, Stack, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { setIsDeleteMenu } from "../../redux/reducers/misc";
+import { setIsDeleteMenu } from "../redux/reducer/misc";
 import {
-  Delete as DeleteIcon,
-  ExitToApp as ExitToAppIcon,
-} from "@mui/icons-material";
+    Delete as DeleteIcon,
+    ExitToApp as ExitToAppIcon,
+  } from "@mui/icons-material";
+import { useDeleteChatMutation, useLeaveGroupMutation } from "../redux/api/api";
+import { useAsyncMutation } from "../hooks/hook";
 import { useNavigate } from "react-router-dom";
-import { useAsyncMutation } from "../../hooks/hook";
-import {
-  useDeleteChatMutation,
-  useLeaveGroupMutation,
-} from "../../redux/api/api";
 
-const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
-  const navigate = useNavigate();
-
-  const { isDeleteMenu, selectedDeleteChat } = useSelector(
+function DeleteChatMenu({ dispatch, deleteMenuAnchor }) {
+    const navigate = useNavigate();
+  const { isDeletemenu, selectedDeleteChat } = useSelector(
     (state) => state.misc
   );
-
   const [deleteChat, _, deleteChatData] = useAsyncMutation(
     useDeleteChatMutation
   );
@@ -27,14 +22,11 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
   const [leaveGroup, __, leaveGroupData] = useAsyncMutation(
     useLeaveGroupMutation
   );
-
   const isGroup = selectedDeleteChat.groupChat;
-
   const closeHandler = () => {
     dispatch(setIsDeleteMenu(false));
     deleteMenuAnchor.current = null;
-  };
-
+  }
   const leaveGroupHandler = () => {
     closeHandler();
     leaveGroup("Leaving Group...", selectedDeleteChat.chatId);
@@ -48,10 +40,9 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
   useEffect(() => {
     if (deleteChatData || leaveGroupData) navigate("/");
   }, [deleteChatData, leaveGroupData]);
-
   return (
     <Menu
-      open={isDeleteMenu}
+      open={isDeletemenu}
       onClose={closeHandler}
       anchorEl={deleteMenuAnchor.current}
       anchorOrigin={{
@@ -63,7 +54,7 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
         horizontal: "center",
       }}
     >
-      <Stack
+     <Stack
         sx={{
           width: "10rem",
           padding: "0.5rem",
@@ -88,6 +79,6 @@ const DeleteChatMenu = ({ dispatch, deleteMenuAnchor }) => {
       </Stack>
     </Menu>
   );
-};
+}
 
 export default DeleteChatMenu;

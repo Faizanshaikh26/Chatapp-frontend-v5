@@ -1,3 +1,29 @@
+// import { createSlice } from "@reduxjs/toolkit";
+
+// const initialState={
+//     user:null,
+//     isLoading:true,
+//     isAdmin:false,
+// }
+// const authSlice=createSlice({
+// name: "auth",initialState,
+// reducers:{
+//     userExists:(state,action)=>{
+//         state.user=action.payload,
+//         state.isLoading=false;
+//         // state.isAdmin=action.payload.isAdmin,
+//     },
+//     userNotExists:(state,action)=>{
+//         state.user=null,
+//         state.isLoading=false;
+//         // state.isAdmin=false;
+//     }
+// }
+// })
+
+// export default authSlice
+// export const {userExists,userNotExists}=authSlice.actions
+
 import { createSlice } from "@reduxjs/toolkit";
 import { adminLogin, adminLogout, getAdmin } from "../thunks/admin";
 import toast from "react-hot-toast";
