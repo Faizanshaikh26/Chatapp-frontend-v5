@@ -31,9 +31,7 @@ const Login = () => {
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
   const email = useInputValidation("");
-
   const avatar = useFileHandler("single");
-
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
