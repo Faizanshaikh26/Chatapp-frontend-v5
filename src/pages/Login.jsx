@@ -50,7 +50,7 @@ const Login = () => {
       const { data } = await axios.post(
         `${server}/api/v1/user/login`,
         {
-          email: username.value,
+          username: username.value,
           password: password.value,
         },
         config
@@ -80,7 +80,7 @@ const Login = () => {
     formData.append("bio", bio.value);
     formData.append("username", username.value);
     formData.append("password", password.value);
-    formData.append("email", email.value);
+
 
     const config = {
       withCredentials: true,
