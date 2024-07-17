@@ -30,7 +30,6 @@ const Login = () => {
   const bio = useInputValidation("");
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
-  const email = useInputValidation("");
   const avatar = useFileHandler("single");
   const dispatch = useDispatch();
 
@@ -148,11 +147,11 @@ const Login = () => {
                 <TextField
                   required
                   fullWidth
-                  label="email"
+                  label="Username"
                   margin="normal"
                   variant="outlined"
-                  value={email.value}
-                  onChange={email.changeHandler}
+                  value={username.value}
+                  onChange={username.changeHandler}
                 />
 
                 <TextField
@@ -257,15 +256,7 @@ const Login = () => {
                   value={name.value}
                   onChange={name.changeHandler}
                 />
-                  <TextField
-                  required
-                  fullWidth
-                  label="email"
-                  margin="normal"
-                  variant="outlined"
-                  value={email.value}
-                  onChange={email.changeHandler}
-                />
+                
 
                 <TextField
                   required
